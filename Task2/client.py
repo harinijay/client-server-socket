@@ -8,7 +8,7 @@ def handle_received_data(client_socket):    # print data sent by the server
         data = client_socket.recv(1024).decode()
         if not data:
             break
-        print(data)
+        print(f"Recieved Message : {data}")
 
 def start_client(server_ip, port, category):      # start the client
 
