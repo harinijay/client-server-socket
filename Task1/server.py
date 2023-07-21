@@ -18,7 +18,7 @@ def start_server(port):
         data = client_socket.recv(1024).decode()
         if data == "terminate":
             break
-        print(f"Received from client: {data}")
+        print(f"Received from client {client_address} : {data}")
 
     print(f"Client {client_address} disconnected")
 
