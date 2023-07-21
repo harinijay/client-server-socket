@@ -9,7 +9,7 @@ def manage_client(client_socket, client_address):   # to handle a specific clien
     print(f"New client connected from {client_address}")
 
     data = client_socket.recv(1024).decode()
-    category = data
+    category = data         # assigned the category of the client
     
     clients[client_address] = {'socket':client_socket, 'type':category}
     
@@ -22,18 +22,18 @@ def manage_client(client_socket, client_address):   # to handle a specific clien
             break
         else:
             print(f"Received from client {client_address}: {data}")
-            handle_message(data)
+            handle_message(client_socket,data)
     
     del clients[client_address]
     
     print(f"Client {client_address} disconnected")
     client_socket.close()
 
-def handle_message(message):     # publish message for interested subscribers
+def handle_message(sender_socket,message):     # publish message for interested subscribers
     
     for subscriber_socket in clients:
-        if clients[subscriber_socket][type] == "SUBSCRIBER":
-            clients[subscriber_socket][socket].send(message.encode())
+        if clients[subscriber_socket]['type'] == "SUBSCRIBER" and clients[subscriber_socket]['socket'] != sender_socket:   # even for a subscriber, the message is not sent to the sender
+            clients[subscriber_socket]['socket'].send(message.encode())
 
 def start_server(port):     # start server 
 

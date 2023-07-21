@@ -4,11 +4,15 @@ import threading
 
 def handle_received_data(client_socket):    # print data sent by the server
 
-    while True:
-        data = client_socket.recv(1024).decode()
-        if not data:
-            break
-        print(f"Recieved Message : {data}")
+    try:
+        while True:
+            data = client_socket.recv(1024).decode()
+            if not data:
+                break
+            print(f"\nRecieved Message : {data}")
+
+    except:
+        pass
 
 def start_client(server_ip, port, category):      # start the client
 
@@ -20,11 +24,11 @@ def start_client(server_ip, port, category):      # start the client
     client_socket.send(f"{category}".encode())
     
     if category == "SUBSCRIBER":        # filter subscribers from the clients
-        receive_thread = threading.Thread(target=handle_received_data, args=(client_socket))
+        receive_thread = threading.Thread(target=handle_received_data, args=(client_socket,))
         receive_thread.start()
     
     while True:
-        message = input("Enter a message (type 'terminate' to exit): ")
+        message = input("\nEnter a message (type 'terminate' to exit): ")
         client_socket.send(f"{message}".encode())
         if message == "terminate":
             break
