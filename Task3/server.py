@@ -26,14 +26,14 @@ def manage_client(client_socket, client_address):   # to handle a specific clien
         else:
             print(f"Received from client {client_address}: {data}")
 
-            handle_message(client_address, data)
+            handle_message(data)
     
     del clients[client_address]
     
     print(f"Client {client_address} disconnected")
     client_socket.close()
 
-def handle_message(publisher_address, message):     # publish message for interested subscribers
+def handle_message(message):     # publish message for interested subscribers
     topic, _, content = message.partition(':')
     
     for subscriber_address in clients:
