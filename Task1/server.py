@@ -2,7 +2,7 @@ import socket
 import sys
 
 
-def start_server(port):  # start server 
+def start_server(port):  # start server
 
     server_socket = socket.socket()
     # bind the socket to localhost ip address which is 127.0.0.1 and port number
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     port = int(sys.argv[1])
 
     # Checking for the valid port number
-    if(port <= 1024 or port > 65535):
+    if (port <= 1024 or port > 65535):
         print("Invalid port number (Try a port between 1025 and 65535)")
         sys.exit(1)
 
