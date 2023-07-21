@@ -2,43 +2,41 @@ import socket
 import sys
 import threading
 
-clients = {}   
-topics = {}    
+clients = {}    # to store and manage active clients
 
 def manage_client(client_socket, client_address):   # to handle a specific client
+
     print(f"New client connected from {client_address}")
     
     data = client_socket.recv(1024).decode()
-    
-    print(f"Client {client_address}  Connected : {data}")
     category, _, topic = data.partition(':')
     
     clients[client_address] = {'socket':client_socket,'type':category,'topic':topic}
     
     while True:
-        
         data = client_socket.recv(1024).decode()
-        if not data:
+        topic, _, message = data.partition(':')  # we need to partition here again it comes like "Topic:Message"
+
+        if not message:
             break
         
-        if data == "terminate":
+        if message == "terminate":
             break
         else:
             print(f"Received from client {client_address}: {data}")
-
-            handle_message(data)
+            handle_message(client_socket,data)
     
     del clients[client_address]
     
     print(f"Client {client_address} disconnected")
     client_socket.close()
 
-def handle_message(message):     # publish message for interested subscribers
-    topic, _, content = message.partition(':')
+def handle_message(sender_socket,content):     # publish message for interested subscribers
+    topic, _, message = content.partition(':')
     
     for subscriber_socket in clients:
-        if clients[subscriber_socket]['type'] == 'SUBSCRIBER' and clients[subscriber_socket]['topic'] == topic :
-            clients[subscriber_socket]['socket'].send(content.encode())
+        if clients[subscriber_socket]['type'] == 'SUBSCRIBER' and clients[subscriber_socket]['topic'] == topic and clients[subscriber_socket]['socket'] != sender_socket:   # even for a subscriber, the message is not sent to the sender
+            clients[subscriber_socket]['socket'].send(message.encode())
 
 def start_server(port):     # start server 
     server_socket = socket.socket()

@@ -29,11 +29,11 @@ def manage_client(client_socket, client_address):   # to handle a specific clien
     print(f"Client {client_address} disconnected")
     client_socket.close()
 
-def handle_message(sender_socket,message):     # publish message for interested subscribers
+def handle_message(sender_socket,content):     # publish message for interested subscribers
     
     for subscriber_socket in clients:
         if clients[subscriber_socket]['type'] == "SUBSCRIBER" and clients[subscriber_socket]['socket'] != sender_socket:   # even for a subscriber, the message is not sent to the sender
-            clients[subscriber_socket]['socket'].send(message.encode())
+            clients[subscriber_socket]['socket'].send(content.encode())
 
 def start_server(port):     # start server 
 
