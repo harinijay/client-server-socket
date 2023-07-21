@@ -36,9 +36,9 @@ def manage_client(client_socket, client_address):   # to handle a specific clien
 def handle_message(message):     # publish message for interested subscribers
     topic, _, content = message.partition(':')
     
-    for subscriber_address in clients:
-        if clients[subscriber_address]['type'] == 'SUBSCRIBER' and clients[subscriber_address]['topic'] == topic :
-            clients[subscriber_address]['socket'].send(content.encode())
+    for subscriber_socket in clients:
+        if clients[subscriber_socket]['type'] == 'SUBSCRIBER' and clients[subscriber_socket]['topic'] == topic :
+            clients[subscriber_socket]['socket'].send(content.encode())
 
 def start_server(port):     # start server 
     server_socket = socket.socket()

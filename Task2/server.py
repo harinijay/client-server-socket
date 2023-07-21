@@ -3,12 +3,15 @@ import sys
 import threading
 
 clients = {}    # to store and manage active clients
-topics = {}     # to store subscribers for each topic/subject
 
 def manage_client(client_socket, client_address):   # to handle a specific client
+
     print(f"New client connected from {client_address}")
+
+    data = client_socket.recv(1024).decode()
+    category = data
     
-    clients[client_address] = client_socket
+    clients[client_address] = {'socket':client_socket, 'type':category}
     
     while True:
         data = client_socket.recv(1024).decode()
@@ -19,24 +22,21 @@ def manage_client(client_socket, client_address):   # to handle a specific clien
             break
         else:
             print(f"Received from client {client_address}: {data}")
-            handle_message(client_address, data)
+            handle_message(data)
     
     del clients[client_address]
     
     print(f"Client {client_address} disconnected")
     client_socket.close()
 
-def handle_message(publisher_address, message):     # publish message for interested subscribers
-    topic, _, content = message.partition(':')
+def handle_message(message):     # publish message for interested subscribers
     
-    if topic not in topics:
-        return
-    
-    for subscriber_socket in topics[topic]:
-        if subscriber_socket != clients[publisher_address]:
-            subscriber_socket.send(content.encode())
+    for subscriber_socket in clients:
+        if clients[subscriber_socket][type] == "SUBSCRIBER":
+            clients[subscriber_socket][socket].send(message.encode())
 
 def start_server(port):     # start server 
+
     server_socket = socket.socket()
     server_socket.bind(('localhost', port))
     server_socket.listen()
@@ -50,9 +50,17 @@ def start_server(port):     # start server
         client_thread.start()       # start threading for each client
 
 if __name__ == '__main__':
+
+    # Checking for the required format
     if len(sys.argv) != 2:
         print("FORMAT: python server.py PORT")
         sys.exit(1)
 
     port = int(sys.argv[1])
+
+    # Checking for the valid port number
+    if(port <= 1024 or port > 65535):
+        print("Invalid port number (Try a port between 1025 and 65535)")
+        sys.exit(1)
+
     start_server(port)

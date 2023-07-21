@@ -2,7 +2,7 @@ import socket
 import sys
 
 
-def start_server(port):
+def start_server(port):  # start server 
 
     server_socket = socket.socket()
     # bind the socket to localhost ip address which is 127.0.0.1 and port number

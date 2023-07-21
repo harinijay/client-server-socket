@@ -2,7 +2,7 @@ import socket
 import sys
 
 
-def start_client(server_ip, port):
+def start_client(server_ip, port):   # start the client
     
     client_socket = socket.socket()
     client_socket.connect((server_ip, port))
@@ -20,7 +20,6 @@ def start_client(server_ip, port):
     client_socket.close()
 
 
-# main function
 if __name__ == '__main__':
 
     # Checking for the required format
